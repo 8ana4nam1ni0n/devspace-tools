@@ -1,0 +1,33 @@
+name: Starship
+
+on: workflow_dispatch
+    
+jobs:
+  get-neovim:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Install Dependencies
+        run: |
+            sudo apt-get install -y curl
+    
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Config Git
+        run: |
+          git config --global user.name "8an4nam1ni0n"
+          git config --global user.email "24194029+8ana4nam1ni0n@users.noreply.github.com"
+
+      - name: Get Starship
+        run: |
+          LATEST_VERSION=$(curl -s https://api.github.com/repos/starship/starship/releases/latest | jq -r '.tag_name')
+          curl -L https://github.com/starship/starship/releases/download/$LATEST_VERSION/starship-x86_64-unknown-linux-musl.tar.gz -o starship.tar.gz
+          echo "LATEST_VERSION=$LATEST_VERSION" >> $GITHUB_ENV
+        
+      - name: Commit and Push
+        run: |
+          git add .
+          git commit -m "Updated Starship Prompt to $env.LATEST_VERSION"
+          git push origin main
