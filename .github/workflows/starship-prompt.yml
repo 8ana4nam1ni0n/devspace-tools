@@ -19,7 +19,7 @@ jobs:
         run: |
           git config --global user.name "8an4nam1ni0n"
           git config --global user.email "24194029+8ana4nam1ni0n@users.noreply.github.com"
-          [ ! -d ./starship ] && mkdir starship
+          [ ! -d "$(pwd)/starship" ] && mkdir starship
 
       - name: Get Starship
         run: |
