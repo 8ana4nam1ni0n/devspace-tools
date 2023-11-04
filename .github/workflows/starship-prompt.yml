@@ -3,7 +3,7 @@ name: Starship
 on: workflow_dispatch
     
 jobs:
-  get-neovim:
+  get-starship:
     runs-on: ubuntu-latest
 
     steps:
@@ -29,5 +29,5 @@ jobs:
       - name: Commit and Push
         run: |
           git add .
-          git commit -m "Updated Starship Prompt to $env.LATEST_VERSION"
+          git commit -m "Updated Starship Prompt to $LATEST_VERSION"
           git push origin main
