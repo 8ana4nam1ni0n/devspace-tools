@@ -25,7 +25,7 @@ jobs:
         run: |
           cd starship
           FILENAME=$(ls)
-          CURRENT_VERSION="${${FILENAME%%.tar.gz}##*-}"
+          CURRENT_VERSION=$(echo $FILENAME | sed -n 's/.*-\(v[0-9.]*\)\.tar\.gz/\1/p')
           LATEST_VERSION=$(curl -s https://api.github.com/repos/starship/starship/releases/latest | jq -r '.tag_name')
           curl -L https://github.com/starship/starship/releases/download/$LATEST_VERSION/starship-x86_64-unknown-linux-musl.tar.gz -o starship-$LATEST_VERSION.tar.gz
           echo "LATEST_VERSION=$LATEST_VERSION" >> $GITHUB_ENV
