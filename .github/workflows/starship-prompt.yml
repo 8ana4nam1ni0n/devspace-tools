@@ -35,7 +35,7 @@ jobs:
       - name: Commit and Push
         run: |
           if [ "$CURRENT_VERSION" != "$LATEST_VERSION" ]; then
-              rm starship/starship-$CURRENT_VERSION.tar.gz
+              [ -f starship/starship-$CURRENT_VERSION.tar.gz ] && rm starship/starship-$CURRENT_VERSION.tar.gz
               git add .
               git commit -m "Updated Starship Prompt to $LATEST_VERSION"
               git push origin main
