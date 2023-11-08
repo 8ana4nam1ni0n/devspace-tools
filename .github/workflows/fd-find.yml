@@ -1,9 +1,11 @@
 name: Fd-Find
 
-on: workflow_dispatch
+on: 
+  schedule:
+  - cron: "0 6 * * 1"
   
 jobs:
-  get-neovim:
+  get-fd-find:
     runs-on: ubuntu-latest
 
     steps:
