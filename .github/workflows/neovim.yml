@@ -1,37 +1,13 @@
 name: Neovim
 
-on:
-  schedule:
-  - cron: "0 6 * * 1"
-    
+on: workflow_dispatch
+  
 jobs:
-  get-neovim:
-    runs-on: ubuntu-latest
-
-    steps:
-
-      - name: Install Dependencies
-        run: |
-            sudo apt-get install -y build-essential cmake curl gettext ninja-build unzip
-    
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Config Git
-        run: |
-          git config --global user.name "8an4nam1ni0n"
-          git config --global user.email "24194029+8ana4nam1ni0n@users.noreply.github.com"
-
-      - name: Build Neovim Portable
-        run: |
-          cd neovim
-          make CMAKE_BUILD_TYPE=RelWithDebInfo
-          make CMAKE_INSTALL_PREFIX=../../nvim install
-          cd -
-          rm -rf neovim
-        
-      - name: Commit and Push
-        run: |
-          git add .
-          git commit -m "Updated and Build Neovim"
-          git push origin main
+  call-curler:
+    uses: ./.github/workflows/curler-reusable.yml
+    with:
+      directory: nvim
+      githubUser: neovim
+      githubRepo: neovim
+      artifact: nvim-linux64.tar.gz
+      artifactOutput: nvim
