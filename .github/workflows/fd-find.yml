@@ -1,4 +1,4 @@
-name: fd-find
+name: Fd-Find
 
 on: workflow_dispatch
   
