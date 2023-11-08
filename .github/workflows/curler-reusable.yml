@@ -1,0 +1,59 @@
+name: Curl-er
+
+on:
+  workflow_call:
+    inputs:
+      directory:
+        required: true
+        type: string
+      githubUser:
+        required: true
+        type: string
+      githubRepo:
+        required: true
+        type: string
+      artifact:
+        required: true
+        type: string
+      artifactOutput:
+        required: true
+        type: string
+    
+jobs:
+  get-artifact:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install Dependencies
+        run: |
+            sudo apt-get install -y curl
+    
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Config Git
+        run: |
+          git config --global user.name "8an4nam1ni0n"
+          git config --global user.email "24194029+8ana4nam1ni0n@users.noreply.github.com"
+          mkdir -p ${{ inputs.directory }}
+
+      - name: Get Artifact
+        run: |
+          cd ${{ inputs.directory }}
+          FILENAME=$(ls)
+          CURRENT_VERSION=$(echo $FILENAME | sed -n 's/.*-\(v\?[0-9.]*\)\.tar\.gz/\1/p')
+          LATEST_VERSION=$(curl -s https://api.github.com/repos/${{ inputs.githubUser }}/${{ inputs.githubRepo }}/releases/latest | jq -r '.tag_name')
+          ARTIFACT=$(echo ${{ inputs.artifact }} | sed -e 's/VERSION/$LATEST_VERSION/')
+          curl -L https://github.com/${{ inputs.githubUser }}/${{ inputs.githubRepo }}/releases/download/$LATEST_VERSION/$ARTIFACT -o ${{ inputs.artifactOutput }}-$LATEST_VERSION.tar.gz
+          echo "LATEST_VERSION=$LATEST_VERSION" >> $GITHUB_ENV
+          echo "CURRENT_VERSION=$CURRENT_VERSION" >> $GITHUB_ENV
+          cd -
+        
+      - name: Commit and Push
+        run: |
+          if [ "$CURRENT_VERSION" != "$LATEST_VERSION" ]; then
+              [ -f ${{ inputs.directory }}/${{ inputs.artifactOutput }}-$CURRENT_VERSION.tar.gz ] && rm  ${{ inputs.directory }}/${{ inputs.artifactOutput }}-$CURRENT_VERSION.tar.gz
+              git add .
+              git commit -m "Updated ${{ inputs.artifactOutput to $LATEST_VERSION"
+              git push origin main
+          fi
