@@ -54,6 +54,6 @@ jobs:
           if [ "$CURRENT_VERSION" != "$LATEST_VERSION" ]; then
               [ -f ${{ inputs.directory }}/${{ inputs.artifactOutput }}-$CURRENT_VERSION.tar.gz ] && rm  ${{ inputs.directory }}/${{ inputs.artifactOutput }}-$CURRENT_VERSION.tar.gz
               git add .
-              git commit -m "Updated ${{ inputs.artifactOutput to $LATEST_VERSION"
+              git commit -m "Updated ${{ inputs.artifactOutput }} to $LATEST_VERSION"
               git push origin main
           fi
