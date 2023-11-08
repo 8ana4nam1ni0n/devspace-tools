@@ -1,44 +1,13 @@
 name: Starship
 
-on:
-  schedule:
-  - cron: "0 6 * * 1"
-    
+on: workflow_dispatch
+  
 jobs:
-  get-starship:
-    runs-on: ubuntu-latest
-
-    steps:
-
-      - name: Install Dependencies
-        run: |
-            sudo apt-get install -y curl
-    
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Config Git
-        run: |
-          git config --global user.name "8an4nam1ni0n"
-          git config --global user.email "24194029+8ana4nam1ni0n@users.noreply.github.com"
-          mkdir -p starship
-
-      - name: Get Starship
-        run: |
-          cd starship
-          FILENAME=$(ls)
-          CURRENT_VERSION=$(echo $FILENAME | sed -n 's/.*-\(v[0-9.]*\)\.tar\.gz/\1/p')
-          LATEST_VERSION=$(curl -s https://api.github.com/repos/starship/starship/releases/latest | jq -r '.tag_name')
-          curl -L https://github.com/starship/starship/releases/download/$LATEST_VERSION/starship-x86_64-unknown-linux-musl.tar.gz -o starship-$LATEST_VERSION.tar.gz
-          echo "LATEST_VERSION=$LATEST_VERSION" >> $GITHUB_ENV
-          echo "CURRENT_VERSION=$CURRENT_VERSION" >> $GITHUB_ENV
-          cd -
-        
-      - name: Commit and Push
-        run: |
-          if [ "$CURRENT_VERSION" != "$LATEST_VERSION" ]; then
-              [ -f starship/starship-$CURRENT_VERSION.tar.gz ] && rm starship/starship-$CURRENT_VERSION.tar.gz
-              git add .
-              git commit -m "Updated Starship Prompt to $LATEST_VERSION"
-              git push origin main
-          fi
+  call-curler:
+    uses: ./.github/workflows/curler-reusable.yml
+    with:
+      directory: starship
+      githubUser: starship
+      githubRepo: starship
+      artifact: starship-VERSION-x86_64-unknown-linux-musl.tar.gz
+      artifactOutput: starship
