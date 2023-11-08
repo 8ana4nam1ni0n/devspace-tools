@@ -24,7 +24,7 @@ jobs:
         
       - name: Get ripgrep
         run: |
-          cd fd
+          cd ripgrep
           FILENAME=$(ls)
           CURRENT_VERSION=$(echo $FILENAME | sed -n 's/.*-\([0-9.]*\)\.tar\.gz/\1/p')
           LATEST_VERSION=$(curl -s https://api.github.com/repos/BurntSushi/ripgrep/releases/latest | jq -r '.tag_name')
@@ -36,7 +36,7 @@ jobs:
       - name: Commit and Push
         run: |
           if [ "$CURRENT_VERSION" != "$LATEST_VERSION" ]; then
-              [ -f fd/fd-$CURRENT_VERSION.tar.gz ] && rm fd/fd-$CURRENT_VERSION.tar.gz
+              [ -f ripgrep/ripgrep-$CURRENT_VERSION.tar.gz ] && rm ripgrep/ripgrep-$CURRENT_VERSION.tar.gz
               git add .
               git commit -m "Updated ripgrep to $LATEST_VERSION"
               git push origin main
