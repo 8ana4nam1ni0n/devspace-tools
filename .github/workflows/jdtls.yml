@@ -1,0 +1,40 @@
+name: jdtls
+
+on: workflow_dispatch
+
+jobs:
+  get-jdtls-lsp:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Dependencies
+        run: sudo apt-get install -y curl
+
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Config Git
+        run: |
+          git config --global user.name "8an4nam1ni0n"
+          git config --global user.email "24194029+8ana4nam1ni0n@users.noreply.github.com"
+          mkdir -p lsp/java
+
+      - name: Fetch JDTLS From Snapshot
+        run: |
+          cd /lsp/java
+          CURRENT=$(ls)
+          LATEST=$(curl -s  https://download.eclipse.org/jdtls/snapshots/latest.txt)
+          if [ "$CURRENT" != "$LATEST" ]; then
+            rm $CURRENT
+            curl -O "https://download.eclipse.org/jdtls/snapshots/${LATEST}"
+          fi
+          echo "LATEST_VERSION=$LATEST" >> $GITHUB_ENV
+          echo "CURRENT_VERSION=$CURRENT" >> $GITHUB_ENV
+          cd -
+          
+      - name: Commit and Push
+        run: |
+          if [ "$CURRENT" != "$LATEST" ]; then
+            git add .
+            git commit -m "Updated JDTLS to $LATEST"
+            git push origin main
+          fi
