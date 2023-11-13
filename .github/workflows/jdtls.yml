@@ -1,4 +1,4 @@
-name: jdtls
+name: JDTLS
 
 on: workflow_dispatch
 
@@ -20,7 +20,7 @@ jobs:
 
       - name: Fetch JDTLS From Snapshot
         run: |
-          cd /lsp/java
+          cd lsp/java
           CURRENT=$(ls)
           LATEST=$(curl -s  https://download.eclipse.org/jdtls/snapshots/latest.txt)
           if [ "$CURRENT" != "$LATEST" ]; then
