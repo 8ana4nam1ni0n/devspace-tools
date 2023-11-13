@@ -3,11 +3,23 @@ name: Neovim
 on: workflow_dispatch
   
 jobs:
-  call-curler:
-    uses: ./.github/workflows/curler-reusable.yml
-    with:
-      directory: nvim
-      githubUser: neovim
-      githubRepo: neovim
-      artifact: nvim-linux64.tar.gz
-      artifactOutput: nvim
+  get-neovim:
+    runs-on: ubunutu-latest
+    steps:
+      - name: Install Dependencies
+        run: sudo apt-get install -y curl
+
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Fetch Neovim Nightly
+        run: |
+          mkdir -p nvim
+          curl -L https://github.com/neovim/neovim-releases/releases/download/nightly/nvim-linux64.tar.gz -o nvim-nightly.tar.gz
+
+      - name: Commit and Push
+        run: |
+         git add .
+         git commit -m "Updated neovim nightly to most recent build"
+         git push origin main
+          
