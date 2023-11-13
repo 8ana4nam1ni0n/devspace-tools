@@ -33,8 +33,8 @@ jobs:
           
       - name: Commit and Push
         run: |
-          if [ "$CURRENT" != "$LATEST" ]; then
+          if [ "$CURRENT_VERSION" != "$LATEST_VERSION" ]; then
             git add .
-            git commit -m "Updated JDTLS to $LATEST"
+            git commit -m "Updated JDTLS to $LATEST_VERSION"
             git push origin main
           fi
