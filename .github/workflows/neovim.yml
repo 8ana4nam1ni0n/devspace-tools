@@ -12,9 +12,14 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Config Git
+        run: |
+          git config --global user.name "8an4nam1ni0n"
+          git config --global user.email "24194029+8ana4nam1ni0n@users.noreply.github.com"
+          mkdir -p nvim
+
       - name: Fetch Neovim Nightly
         run: |
-          mkdir -p nvim
           cd nvim
           curl -L https://github.com/neovim/neovim-releases/releases/download/nightly/nvim-linux64.tar.gz -o nvim-nightly.tar.gz
           cd -
