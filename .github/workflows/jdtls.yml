@@ -1,4 +1,4 @@
-name: JDTLS
+name: Jdtls
 
 on: workflow_dispatch
 
@@ -24,7 +24,7 @@ jobs:
           CURRENT=$(ls)
           LATEST=$(curl -s  https://download.eclipse.org/jdtls/snapshots/latest.txt)
           if [ "$CURRENT" != "$LATEST" ]; then
-            rm $CURRENT
+           [[ ! -z "$CURRENT" ]] && rm "$CURRENT"
             curl -O "https://download.eclipse.org/jdtls/snapshots/${LATEST}"
           fi
           echo "LATEST_VERSION=$LATEST" >> $GITHUB_ENV
