@@ -1,15 +1,36 @@
 name: Ripgrep
 
-on:
-  schedule:
-  - cron: "0 6 * * 1"
+on: workflow_dispatch
   
 jobs:
-  call-curler:
-    uses: ./.github/workflows/curler-reusable.yml
-    with:
-      directory: ripgrep
-      githubUser: BurntSushi
-      githubRepo: ripgrep
-      artifact: ripgrep-VERSION-x86_64-unknown-linux-musl.tar.gz
-      artifactOutput: ripgrep
+  get-ripgrep:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Dependencies
+        run: sudo apt-get install -y curl
+
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Config Git
+        run: |
+          git config --global user.name "8an4nam1ni0n"
+          git config --global user.email "24194029+8ana4nam1ni0n@users.noreply.github.com"
+          mkdir -p ripgrep
+
+      - name: Fetch and Unpack Ripgrep
+        run: |
+          cd ripgrep
+          VERSION=$(curl -s https://api.github.com/repos/BurntSushi/ripgrep/releases/latest | jq -r '.tag_name')
+          curl -L https://github.com/BurntSushi/ripgrep/releases/download/$VERSION/ripgrep-$VERSION-x86_64-unknown-linux-musl.tar.gz -o ripgrep.tar.gz
+          tar xzvf ripgrep.tar.gz --strip-components=1 ripgrep-$VERSION-x86_64-unknown-linux-musl/rg
+          rm ripgrep.tar.gz
+          cd -
+
+      - name: Commit and Push
+        run: |
+          if [[ ! -z "$(git status -s)" ]]; then 
+             git add .
+             git commit -m "Updated ripgrep to most recent build"
+             git push origin main
+          fi
