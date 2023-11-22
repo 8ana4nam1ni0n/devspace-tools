@@ -56,6 +56,6 @@ jobs:
           if (( $NEEDS_UPDATE == 1)); then
               [ -f ${{ inputs.directory }}/$ARTIFACT ] && rm  ${{ inputs.directory }}/$ARTIFACT
               git add .
-              git commit -m "Updated $ARTIFACT to $LATEST_VERSION"
+              git commit -m "Updated $ARTIFACT"
               git push origin main
           fi
