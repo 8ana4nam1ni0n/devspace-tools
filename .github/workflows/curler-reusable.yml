@@ -45,7 +45,7 @@ jobs:
           if ! test -z $FILENAME; then
             [ $FILENAME != $ARTIFACT ] && UPDATE=1 || UPDATE=0
           else
-            UPDATE=0
+            UPDATE=1
           fi
           echo "NEEDS_UPDATE=$UPDATE" >> $GITHUB_ENV
           echo "ARTIFACT=$ARTIFACT" >> $GITHUB_ENV
