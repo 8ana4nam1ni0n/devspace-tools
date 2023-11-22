@@ -38,6 +38,7 @@ jobs:
         run: |
           cd ${{ inputs.directory }}
           FILENAME=$(ls)
+          CURRENT_VERSION=""
           if ! test -z $FILENAME; then
             CURRENT_VERSION=$(echo $FILENAME | grep -oE "v?([0-9]+\.){2}[0-9]+")
           fi
@@ -52,7 +53,7 @@ jobs:
         
       - name: Commit and Push
         run: |
-          if [ ${CURRENT_VERSION+x} != "$LATEST_VERSION" ]; then
+          if [ "$CURRENT_VERSION" != "$LATEST_VERSION" ]; then
               [ -f ${{ inputs.directory }}/$ARTIFACT ] && rm  ${{ inputs.directory }}/$ARTIFACT
               git add .
               git commit -m "Updated $ARTIFACT to $LATEST_VERSION"
