@@ -49,12 +49,13 @@ jobs:
           fi
           echo "NEEDS_UPDATE=$UPDATE" >> $GITHUB_ENV
           echo "ARTIFACT=$ARTIFACT" >> $GITHUB_ENV
+          echo "OLD=$FILENAME" >> $GITHUB_ENV
           cd -
         
       - name: Commit and Push
         run: |
           if (( $NEEDS_UPDATE == 1)); then
-              [ -f ${{ inputs.directory }}/$ARTIFACT ] && rm  ${{ inputs.directory }}/$ARTIFACT
+              [ ! -z $OLD && -f ${{ inputs.directory }}/$OLD ] && rm  ${{ inputs.directory }}/$OLD
               git add .
               git commit -m "Updated $ARTIFACT"
               git push origin main
