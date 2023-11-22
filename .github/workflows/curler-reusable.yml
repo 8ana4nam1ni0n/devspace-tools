@@ -48,11 +48,11 @@ jobs:
           #echo "ARTIFACT=$ARTIFACT" >> $GITHUB_ENV
           cd -
         
-      - name: Commit and Push
-        run: |
-          if [ "$CURRENT_VERSION" == "$LATEST_VERSION" ]; then
-              [ -f ${{ inputs.directory }}/$ARTIFACT ] && rm  ${{ inputs.directory }}/$ARTIFACT
-              git add .
-              git commit -m "Updated $ARTIFACT to $LATEST_VERSION"
-              git push origin main
-          fi
+      # - name: Commit and Push
+      #   run: |
+      #     if [ "$CURRENT_VERSION" == "$LATEST_VERSION" ]; then
+      #         [ -f ${{ inputs.directory }}/$ARTIFACT ] && rm  ${{ inputs.directory }}/$ARTIFACT
+      #         git add .
+      #         git commit -m "Updated $ARTIFACT to $LATEST_VERSION"
+      #         git push origin main
+      #     fi
