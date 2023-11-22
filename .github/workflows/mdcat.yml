@@ -10,4 +10,3 @@ jobs:
       githubUser: swsnr
       githubRepo: mdcat
       artifact: mdcat-VERSION-x86_64-unknown-linux-musl.tar.gz
-      artifactOutput: mdcat
