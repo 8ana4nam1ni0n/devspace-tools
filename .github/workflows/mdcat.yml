@@ -1,0 +1,13 @@
+name: MdCat
+
+on: workflow_dispatch
+  
+jobs:
+  call-curler:
+    uses: ./.github/workflows/curler-reusable.yml
+    with:
+      directory: mdcat
+      githubUser: swsnr
+      githubRepo: mdcat
+      artifact: mdcat-VERSION-x86_64-unknown-linux-musl.tar.gz
+      artifactOutput: mdcat
