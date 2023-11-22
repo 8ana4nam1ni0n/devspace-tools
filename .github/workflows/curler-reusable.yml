@@ -52,7 +52,7 @@ jobs:
         
       - name: Commit and Push
         run: |
-          if [ "$CURRENT_VERSION" != "$LATEST_VERSION" ]; then
+          if [ ${CURRENT_VERSION+x} != "$LATEST_VERSION" ]; then
               [ -f ${{ inputs.directory }}/$ARTIFACT ] && rm  ${{ inputs.directory }}/$ARTIFACT
               git add .
               git commit -m "Updated $ARTIFACT to $LATEST_VERSION"
