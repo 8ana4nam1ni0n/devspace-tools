@@ -1,8 +1,9 @@
 name: Ripgrep
 
-on:
-  schedule:
-  - cron: "0 6 * * 1"
+on: workflow_dispatch
+# on:
+#   schedule:
+#   - cron: "0 6 * * 1"
 
 jobs:
   call-curler:
@@ -12,4 +13,3 @@ jobs:
       githubUser: BurntSushi
       githubRepo: ripgrep
       artifact: ripgrep-VERSION-x86_64-unknown-linux-musl.tar.gz
-      artifactOutput: ripgrep
