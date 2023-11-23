@@ -1,8 +1,10 @@
 name: MdCat
 
-on: workflow_dispatch
-  
-jobs:
+on:
+  schedule:
+  - cron: "0 6 * * 1"
+
+jo "0 6 * * 1"bs:
   call-curler:
     uses: ./.github/workflows/curler-reusable.yml
     with:
