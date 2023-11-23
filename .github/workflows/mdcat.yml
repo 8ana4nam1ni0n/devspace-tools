@@ -4,7 +4,7 @@ on:
   schedule:
   - cron: "0 6 * * 1"
 
-jo "0 6 * * 1"bs:
+jobs:
   call-curler:
     uses: ./.github/workflows/curler-reusable.yml
     with:
