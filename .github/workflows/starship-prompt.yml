@@ -11,4 +11,4 @@ jobs:
       directory: starship
       githubUser: starship
       githubRepo: starship
-      artifact: starship-VERSION-x86_64-unknown-linux-musl.tar.gz
+      artifact: starship-x86_64-unknown-linux-musl.tar.gz
