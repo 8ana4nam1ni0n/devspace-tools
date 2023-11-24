@@ -36,7 +36,7 @@ jobs:
           currentRegistryVersion=$(npm info ${{ inputs.lspPackageName }} version)
           currentLocalVersion=$(test -d $dir && (ls $dir | grep -oP "(\d+\.){2}\d+") || echo "")
           update=0
-          if [ -z currentLocalVersion || ($currentLocalVersion != $currentRegistryVersion) ]; then
+          if [ -z "$currentLocalVersion" ] || [ "$currentLocalVersion" != "$currentRegistryVersion" ]; then
             update=1
           fi
           echo "needs-update=$update" >> $GITHUB_OUTPUT
