@@ -1,0 +1,13 @@
+name: Clean All Workflow Runs
+
+on: workflow_dispatch
+
+jobs:
+  delete-runs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Delete completed runs for all workflows
+        uses: Mattraks/delete-workflow-runs@v2
+        with:
+          filter: completed
