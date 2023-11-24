@@ -1,4 +1,4 @@
-name: GetLSP
+name: GetLSPs
 
 on: workflow_dispatch
 
