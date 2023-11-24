@@ -8,8 +8,3 @@ jobs:
     with:
       directory: lsp/yaml
       lspPackageName: yaml-language-server
-  get-bash-language-server:
-    uses: ./.github/workflows/lsp-downloader.yml
-    with:
-      directory: lsp/bash
-      lspPackageName: bash-language-server
