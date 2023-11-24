@@ -10,4 +10,5 @@ jobs:
       - name: Delete completed runs for all workflows
         uses: Mattraks/delete-workflow-runs@v2
         with:
-          keep_minum_runs: 6
+          retain_days: 14
+          keep_minimum_runs: 6
