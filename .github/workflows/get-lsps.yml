@@ -1,0 +1,15 @@
+name: GetLSP
+
+on: workflow_dispatch
+
+jobs:
+  get-yaml-language-server:
+    uses: ./.github/workflows/lsp-downloader.yml
+    with:
+      directory: lsp/yaml
+      lspPackageName: yaml-language-server
+  get-bash-language-server:
+    uses: ./.github/workflows/lsp-downloader.yml
+    with:
+      directory: lsp/yaml
+      lspPackageName: bash-language-server
