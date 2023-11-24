@@ -1,0 +1,61 @@
+name: Lsp-Downloader
+on:
+  workflow_call:
+    inputs:
+      directory:
+        description: 'Directory you want to store the lsp tar.gz file after download'
+        required: true
+        type: string
+      lspPackageName:
+        description: 'NPM LSP package name to be downloaded'
+        required: true
+        type: string
+
+jobs:
+  get-lsp:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Config Git
+        run: |
+          git config --global user.name "8an4nam1ni0n"
+          git config --global user.email "24194029+8ana4nam1ni0n@users.noreply.github.com"
+          
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: latest
+
+      - name: Check If Needs Update
+        id: check_for_update
+        run: |
+          dir=${{ inputs.directory }}
+          currentRegistryVersion=$(npm info ${{ inputs.lspPackageName }} version)
+          currentLocalVersion=$(test -d $dir && (ls $dir | grep -oP "(\d+\.){2}\d+") || echo "")
+          update=0
+          if [ -z currentLocalVersion || ($currentLocalVersion != $currentRegistryVersion) ]; then
+            update=1
+          fi
+          echo "needs-update=$update" >> $GITHUB_OUTPUT
+
+      - name: Remove Old LSP Version
+        if: ${{ steps.check_for_update.outputs.needs-update == 1 }}
+        run: |
+          test -d ${{ inputs.directory }} && rm ${{ inputs.directory }}/*.tgz
+
+      - name: Get LSP
+        if: ${{ steps.check_for_update.outputs.needs-update == 1 }}
+        run: |
+          mkdir -p ${{ inputs.directory }}
+          npm pack ${{ inputs.lspPackageName }}
+          mv ${{ inputs.lspPackageName}}-*.tgz ${{ inputs.directory }}
+
+      - name: Commit and Push
+        if: ${{ steps.check_for_update.outputs.needs-update == 1 }}
+        run: |
+          git add .
+          git commit -m "Updated ${{ inputs.lspPackageName }}"
+          git push origin main
