@@ -1,0 +1,10 @@
+name: Bash-Language-Server
+
+on: workflow_dispatch
+
+jobs:
+  call-lsp-downloader:
+    uses: ./.github/workflows/lsp-downloader.yml
+    with:
+      directory: lsp/bash
+      lspPackageName: bash-language-server
