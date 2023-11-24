@@ -1,9 +1,9 @@
-name: GetLSPs
+name: Yaml-Language-Server
 
 on: workflow_dispatch
 
 jobs:
-  get-yaml-language-server:
+  call-lsp-downloader:
     uses: ./.github/workflows/lsp-downloader.yml
     with:
       directory: lsp/yaml
