@@ -1,6 +1,10 @@
 name: Bash-Language-Server
 
-on: workflow_dispatch
+on:
+  schedule:
+    - cron: '0 6 * * 1'
+    
+  workflow_dispatch:
 
 jobs:
   call-lsp-downloader:
