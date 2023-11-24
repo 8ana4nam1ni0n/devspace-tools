@@ -44,7 +44,7 @@ jobs:
       - name: Remove Old LSP Version
         if: ${{ steps.check_for_update.outputs.needs-update == 1 }}
         run: |
-          dir= ${{ inputs.directory }}
+          dir=${{ inputs.directory }}
           [ -d "$dir" && [ -n "$(ls "$dir")" ]] && rm "$dir"/*.tgz
 
       - name: Get LSP
