@@ -12,4 +12,4 @@ jobs:
       directory: lsp/lua
       githubUser: LuaLs
       githubRepo: lua-language-server
-      artifact: lua-language-server-VERSION-linux-x64-musl.tar.gz
+      artifact: lua-language-server-VERSION-linux-x64.tar.gz
