@@ -1,0 +1,15 @@
+name: LuaLS
+
+on:
+  workflow_dispatch:
+  schedule:
+  - cron: "0 6 * * 1"
+
+jobs:
+  call-curler:
+    uses: ./.github/workflows/curler-reusable.yml
+    with:
+      directory: lsp/lua
+      githubUser: LuaLs
+      githubRepo: lua-language-server
+      artifact: lua-language-server-VERSION-linux-x64-musl.tar.gz
