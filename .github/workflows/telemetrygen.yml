@@ -26,7 +26,8 @@ jobs:
       - name: Install TelemetryGen
         run: |
           mkdir -p gobin
-          go install github.com/open-telemetry/opentelemetry-collector-contrib/cmd/telemetrygen@latest -godir=$(pwd)/gobin
+          go install github.com/open-telemetry/opentelemetry-collector-contrib/cmd/telemetrygen@latest
+          mv $(go env GOPATH)/bin/telemetrygen ./gobin
 
       - name: Git add
         run: git add gobin
