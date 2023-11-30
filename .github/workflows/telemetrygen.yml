@@ -1,0 +1,38 @@
+name: TelemetryGen
+
+on:
+  workflow_dispatch:
+  schedule:
+  - cron: "0 6 * * 1"
+
+jobs:
+  install-telemetrygen:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Config Git
+        run: |
+          git config --global user.name "8an4nam1ni0n"
+          git config --global user.email "24194029+8ana4nam1ni0n@users.noreply.github.com"
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: latest
+
+      - name: Install TelemetryGen
+        run: |
+          mkdir -p gobin
+          go install github.com/open-telemetry/opentelemetry-collector-contrib/cmd/telemetrygen@latest -godir=$(pwd)/gobin
+
+      - name: Git add
+        run: git add gobin
+
+      - name: Commit changes
+        run: git commit -m "Install TelemetryGen"
+
+      - name: Git push
+        run: git push
