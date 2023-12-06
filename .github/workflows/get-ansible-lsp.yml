@@ -1,0 +1,13 @@
+name: Ansible-Language-Server
+
+on: 
+  workflow_dispatch:
+  schedule:
+    - cron: '0 6 * * 1'
+
+jobs:
+  call-lsp-downloader:
+    uses: ./.github/workflows/lsp-downloader.yml
+    with:
+      directory: lsp/ansible
+      lspPackageName: ansible-language-server
