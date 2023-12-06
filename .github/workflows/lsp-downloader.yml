@@ -53,10 +53,12 @@ jobs:
         if: ${{ steps.check_for_update.outputs.needs-update == 1 }}
         run: |
           mkdir -p ${{ inputs.directory }}
-          npm install -g ${{ inputs.lspPackageName }} --prefix ./tmp/${{ inputs.lspPackageName }}
-          version=$(npm list -g ${{ inputs.lspPackageName }} --prefix ./tmp/${{ inputs.lspPackageName }} | grep -oP "(\d+\.){2}\d+")
-          tar czvf ${{ inputs.lspPackageName }}-$version.tgz -C ./tmp/ ${{ inputs.lspPackageName }}
-          mv ${{ inputs.lspPackageName}}-$version.tgz ${{ inputs.directory }}
+          packageName="${{ inputs.lspPackageName }}"
+          [ "${packageName:0:1}" == "@" ] && packageName=$(echo "${packageName}" | grep -oP "(?<=/)[^/]+")
+          npm install -g ${{ inputs.lspPackageName }} --prefix ./tmp/$packageName
+          version=$(npm list -g ${{ inputs.lspPackageName }} --prefix ./tmp/$packageName | grep -oP "(\d+\.){2}\d+")
+          tar czvf $packageName-$version.tgz -C ./tmp/ $packageName
+          mv $packageName-$version.tgz ${{ inputs.directory }}
           rm -rf ./tmp
 
       - name: Commit and Push
