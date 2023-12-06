@@ -10,4 +10,4 @@ jobs:
     uses: ./.github/workflows/lsp-downloader.yml
     with:
       directory: lsp/ansible
-      lspPackageName: ansible-language-server
+      lspPackageName: "@ansible/ansible-language-server"
