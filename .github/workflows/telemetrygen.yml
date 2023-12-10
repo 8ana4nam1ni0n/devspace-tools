@@ -6,48 +6,8 @@ on:
   - cron: "0 6 * * 1"
 
 jobs:
-  install-telemetrygen:
-    runs-on: ubuntu-20.04
-    env:
-      CC: gcc-10
-    container:
-      image: ubuntu:18.04
-    steps:
-      - name: Prepare container
-        run: |
-          apt-get update
-          apt-get install -y software-properties-common
-          add-apt-repository -y ppa:ubuntu-toolchain-r/test # For gcc-10.
-          add-apt-repository -y ppa:git-core/ppa # For git>=2.18.
-          apt-get update
-          apt-get install -y git gcc-10
-          # Workaround for https://github.com/actions/checkout/issues/766.
-          git config --global --add safe.directory "$GITHUB_WORKSPACE"
-      
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Config Git
-        run: |
-          git config --global user.name "8an4nam1ni0n"
-          git config --global user.email "24194029+8ana4nam1ni0n@users.noreply.github.com"
-          
-      - name: Set up Go
-        uses: actions/setup-go@v4
-        with:
-          go-version: "1.20"
-
-      - name: Install TelemetryGen
-        run: |
-          mkdir -p gobin
-          go install github.com/open-telemetry/opentelemetry-collector-contrib/cmd/telemetrygen@latest
-          mv $(go env GOPATH)/bin/telemetrygen ./gobin
-
-      - name: Git add
-        run: git add gobin
-
-      - name: Commit changes
-        run: git commit -m "Install TelemetryGen"
-
-      - name: Git push
-        run: git push
+  call-go-modules-downloader:
+    uses: ./.github/workflows/go-modules-downloader.yml
+    with:
+      tool: telemetrygen
+      moduleRepo: github.com/open-telemetry/opentelemetry-collector-contrib/cmd/telemetrygen@latest
