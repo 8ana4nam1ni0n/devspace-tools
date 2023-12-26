@@ -46,15 +46,14 @@ jobs:
       - name: Create artifact directory
         id: setup
         run: |
-          ARTIFACT_DIR=artifact
-          mkdir -p $ARTIFACT_DIR
-          cp $(go env GOPATH)/bin/${{ inputs.tool }} $ARTIFACT_DIR/
-          echo "::set-output name=artifact-path::$ARTIFACT_DIR"
+          CURRENT_DIR=.
+          cp $(go env GOPATH)/bin/${{ inputs.tool }} $CURRENT_DIR/
+          echo "::set-output name=artifact-path::$CURRENT_DIR"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
-          name: tool-artifact
+          name: ${{ inputs.tool }}
           path: ${{ steps.setup.outputs.artifact-path }}
 
   commit-and-push:
@@ -67,12 +66,12 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v3
         with:
-          name: tool-artifact
+          name: ${{ inputs.tool }}
 
       - name: Copy tool to gobin
         run: |
           mkdir -p gobin
-          cp -f tool-artifact gobin/
+          cp -f ${{ inputs.tool }} gobin/
 
       - name: Check for changes
         id: git-check
