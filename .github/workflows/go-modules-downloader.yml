@@ -17,8 +17,6 @@ jobs:
       CC: gcc-10
     container:
       image: ubuntu:18.04
-    outputs:
-      artifact-path: ${{ steps.setup.outputs.artifacts-path }}
     
     steps:
       - name: Prepare container
@@ -46,15 +44,17 @@ jobs:
       - name: Create artifact directory
         id: setup
         run: |
-          CURRENT_DIR=.
-          cp $(go env GOPATH)/bin/${{ inputs.tool }} $CURRENT_DIR/
-          echo "::set-output name=artifact-path::$CURRENT_DIR"
+          mkdir -p artifacts
+          $ARTIFACT_DIR=artifacts
+          cp $(go env GOPATH)/bin/${{ inputs.tool }} $ARTIFACT_DIR/
+          echo "ARTIFACT_PATH=$ARTIFACT_DIR" >> $GITHUB_OUTPUT
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
           name: ${{ inputs.tool }}
-          path: ${{ steps.setup.outputs.artifact-path }}
+          path: $ARTIFACT_PATH/${{ inputs.tool }}
+          retention-days: 1
 
   commit-and-push:
     needs: install-tool
@@ -70,23 +70,24 @@ jobs:
 
       - name: Copy tool to gobin
         run: |
-          mkdir -p gobin
-          cp -f ${{ inputs.tool }} gobin/
+          ls -R
+          # mkdir -p gobin
+          # cp -f ${{ inputs.tool }} gobin/
 
-      - name: Check for changes
-        id: git-check
-        run: |
-          if [ -z "$(git status --porcelain)" ]; then
-            echo "::set-output name=changes::false"
-          else
-            echo "::set-output name=changes::true"
-          fi
+      # - name: Check for changes
+      #   id: git-check
+      #   run: |
+      #     if [ -z "$(git status --porcelain)" ]; then
+      #       echo "::set-output name=changes::false"
+      #     else
+      #       echo "::set-output name=changes::true"
+      #     fi
 
-      - name: Commit and Push
-        if: steps.git-check.outputs.changes == 'true'
-        run: |
-          git config --global user.name github-actions
-          git config --global user.email github-actions@github.com
-          git add gobin/*
-          git commit -m "Installed/Updated tool: ${{ inputs.tool }}"
-          git push
+      # - name: Commit and Push
+      #   if: steps.git-check.outputs.changes == 'true'
+      #   run: |
+      #     git config --global user.name github-actions
+      #     git config --global user.email github-actions@github.com
+      #     git add gobin/*
+      #     git commit -m "Installed/Updated tool: ${{ inputs.tool }}"
+      #     git push
