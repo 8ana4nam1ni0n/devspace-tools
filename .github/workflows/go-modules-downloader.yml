@@ -17,6 +17,8 @@ jobs:
       CC: gcc-10
     container:
       image: ubuntu:18.04
+    outputs:
+      artifact-path: ${{ steps.setup.outputs.artifacts-path }}
     
     steps:
       - name: Prepare container
@@ -32,11 +34,6 @@ jobs:
       
       - name: Checkout repository
         uses: actions/checkout@v3
-
-      - name: Config Git
-        run: |
-          git config --global user.name "8an4nam1ni0n"
-          git config --global user.email "24194029+8ana4nam1ni0n@users.noreply.github.com"
           
       - name: Set up Go
         uses: actions/setup-go@v4
@@ -44,16 +41,53 @@ jobs:
           go-version: "1.20"
 
       - name: Install Tool
+        run: go install ${{ inputs.moduleRepo }}
+
+      - name: Create artifact directory
+        id: setup
+        run: |
+          ARTIFACT_DIR=artifact
+          mkdir -p $ARTIFACT_DIR
+          cp $(go env GOPATH)/bin/${{ inputs.tool }} $ARTIFACT_DIR/
+          echo "::set-output name=artifact-path::$ARTIFACT_DIR"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: tool-artifact
+          path: ${{ steps.setup.outputs.artifact-path }}
+
+  commit-and-push:
+    needs: install-tool
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout respository
+        uses: actions/checkout@v3
+
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: tool-artifact
+
+      - name: Copy tool to gobin
         run: |
           mkdir -p gobin
-          go install ${{ inputs.moduleRepo }}
-          mv $(go env GOPATH)/bin/${{ inputs.tool }} ./gobin
+          cp -f tool-artifact/* gobin/
 
-      - name: Git add
-        run: git add gobin
+      - name: Check for changes
+        id: git-check
+        run: |
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "::set-output name=changes::false"
+          else
+            echo "::set-output name=changes::true"
+          fi
 
-      - name: Commit changes
-        run: git commit -m "Installed ${{ inputs.tool }}"
-
-      - name: Git push
-        run: git push
+      - name: Commit and Push
+        if: steps.git-check.outputs.changes == 'true'
+        run: |
+          git config --global user.name github-actions
+          git config --global user.email github-actions@github.com
+          git add gobin/*
+          git commit -m "Installed/Updated tool: ${{ inputs.tool }}"
+          git push
