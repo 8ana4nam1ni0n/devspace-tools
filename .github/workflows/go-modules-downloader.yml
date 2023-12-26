@@ -45,7 +45,7 @@ jobs:
         id: setup
         run: |
           mkdir -p artifacts
-          $ARTIFACT_DIR=artifacts
+          ARTIFACT_DIR=artifacts
           cp $(go env GOPATH)/bin/${{ inputs.tool }} $ARTIFACT_DIR/
           echo "ARTIFACT_PATH=$ARTIFACT_DIR" >> $GITHUB_OUTPUT
 
