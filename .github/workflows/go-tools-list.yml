@@ -1,0 +1,20 @@
+name: Install Go Tools
+
+on:
+  workflow_dispatch:
+  schedule:
+  - cron: "0 6 * * 1"
+
+jobs:
+  call-go-modules-downloader:
+    strategy:
+      matrix:
+        include:
+            - tool: "telemetrygen"
+              repo: "github.com/open-telemetry/opentelemetry-collector-contrib/cmd/telemetrygen@latest"
+            - tool: "yq"
+              repo: "github.com/mikefarah/yq/v4@latest"
+    uses: ./.github/workflows/go-modules-downloader.yml
+    with:
+      tool: ${{ matrix.tool }}
+      moduleRepo: ${{ matrix.repo }}
