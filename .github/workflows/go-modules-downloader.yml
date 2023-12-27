@@ -74,7 +74,7 @@ jobs:
         run: |
           ls -R
           mkdir -p gobin
-          cp -f ${{ inputs.tool }} gobin/
+          mv -f ${{ inputs.tool }} gobin/
 
       - name: Check for changes
         id: git-check
