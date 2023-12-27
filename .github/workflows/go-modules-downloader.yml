@@ -17,6 +17,8 @@ jobs:
       CC: gcc-10
     container:
       image: ubuntu:18.04
+    outputs:
+      artifact-path: ${{ steps.setup.outputs.artifact-path }}
     
     steps:
       - name: Prepare container
@@ -47,13 +49,13 @@ jobs:
           mkdir -p artifacts
           ARTIFACT_DIR=artifacts
           cp $(go env GOPATH)/bin/${{ inputs.tool }} $ARTIFACT_DIR/
-          echo "ARTIFACT_PATH=$ARTIFACT_DIR" >> $GITHUB_OUTPUT
+          echo "artifact-path=$ARTIFACT_DIR/${{ inputs.tool }}" >> $GITHUB_OUTPUT
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
           name: ${{ inputs.tool }}
-          path: $ARTIFACT_PATH/${{ inputs.tool }}
+          path: ${{ steps.setup.outputs.artifact-path }}
           retention-days: 1
 
   commit-and-push:
