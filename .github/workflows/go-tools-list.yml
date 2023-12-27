@@ -8,6 +8,7 @@ on:
 jobs:
   call-go-modules-downloader:
     strategy:
+      max-parallel: 1
       matrix:
         include:
             - tool: "telemetrygen"
