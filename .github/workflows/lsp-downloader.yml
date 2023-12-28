@@ -14,58 +14,82 @@ on:
 jobs:
   get-lsp:
     runs-on: ubuntu-latest
+    outputs:
+      artifact-path: ${{ steps.get-lsp.outputs.artifact-path }}
+      package-name: $ {{ steps.get-lsp.outputs.package-name }}
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-
-      - name: Config Git
-        run: |
-          git config --global user.name "8an4nam1ni0n"
-          git config --global user.email "24194029+8ana4nam1ni0n@users.noreply.github.com"
           
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: latest
-
-      - name: Check If Needs Update
-        id: check_for_update
-        run: |
-          dir=${{ inputs.directory }}
-          currentRegistryVersion=$(npm info ${{ inputs.lspPackageName }} version)
-          currentLocalVersion=$(test -d $dir && (ls $dir | grep -oP "(\d+\.){2}\d+") || echo "")
-          update=0
-          if [ -z "$currentLocalVersion" ] || [ "$currentLocalVersion" != "$currentRegistryVersion" ]; then
-            update=1
-          fi
-          echo "needs-update=$update" >> $GITHUB_OUTPUT
-
-      - name: Remove Old LSP Version
-        if: ${{ steps.check_for_update.outputs.needs-update == 1 }}
-        run: |
-          dir=${{ inputs.directory }}
-          if [ -d "$dir" ] && [ ! -z "$(ls "$dir")" ]; then
-            rm "$dir"/*.tgz
-          fi
-
+     
       - name: Get LSP
-        if: ${{ steps.check_for_update.outputs.needs-update == 1 }}
+        id: get-lsp
         run: |
-          mkdir -p ${{ inputs.directory }}
+          mkdir -p artifacts
+          ARTIFACT_PATH=artifacts
           packageName="${{ inputs.lspPackageName }}"
           [ "${packageName:0:1}" == "@" ] && packageName=$(echo "${packageName}" | grep -oP "(?<=/)[^/]+")
-          npm install -g ${{ inputs.lspPackageName }} --prefix ./tmp/$packageName
-          version=$(npm list -g ${{ inputs.lspPackageName }} --prefix ./tmp/$packageName | grep -oP "(\d+\.){2}\d+")
-          tar czvf $packageName-$version.tgz -C ./tmp/ $packageName
-          mv $packageName-$version.tgz ${{ inputs.directory }}
-          rm -rf ./tmp
+          npm install -g ${{ inputs.lspPackageName }} --prefix $ARTIFACT_PATH/$packageName
+          tar czvf $packageName.tgz -C $ARTIFACT_PATH/ $packageName
+          echo "package-name=$packageName" >> $GITHUB_OUTPUT
+          echo "artifact-path=$ARTIFACT_PATH/$packageName.tgz" >> $GITHUB_OUTPUT
+          
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ steps.get-lsp.outputs.package-name }}
+          path: ${{ steps.get-lsp.outputs.artifact-path }}
+          retention-days: 1
+  
+  commit-and-push:
+    runs-on: ubuntu-latest
+    needs: get-lsp
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-      - name: Commit and Push
-        if: ${{ steps.check_for_update.outputs.needs-update == 1 }}
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ needs.get-lsp.outputs.package-name }}
+
+      - name: Move artifact to lsp dir
         run: |
-          git fetch origin main
-          git rebase origin/main
-          git add .
-          git commit -m "Updated ${{ inputs.lspPackageName }}"
-          git push origin main
+          ls -R
+          mkdir -p ${{ inputs.directory }}
+        
+      # - name: Check If Needs Update
+      #   id: check_for_update
+      #   run: |
+      #     dir=${{ inputs.directory }}
+      #     currentRegistryVersion=$(npm info ${{ inputs.lspPackageName }} version)
+      #     currentLocalVersion=$(test -d $dir && (ls $dir | grep -oP "(\d+\.){2}\d+") || echo "")
+      #     update=0
+      #     if [ -z "$currentLocalVersion" ] || [ "$currentLocalVersion" != "$currentRegistryVersion" ]; then
+      #       update=1
+      #     fi
+      #     echo "needs-update=$update" >> $GITHUB_OUTPUT
+
+      # - name: Remove Old LSP Version
+      #   if: ${{ steps.check_for_update.outputs.needs-update == 1 }}
+      #   run: |
+      #     dir=${{ inputs.directory }}
+      #     if [ -d "$dir" ] && [ ! -z "$(ls "$dir")" ]; then
+      #       rm "$dir"/*.tgz
+      #     fi
+
+      # - name: Commit and Push
+      #   if: ${{ steps.check_for_update.outputs.needs-update == 1 }}
+      #   run: |
+      #     git config --global user.name "8an4nam1ni0n"
+      #     git config --global user.email "24194029+8ana4nam1ni0n@users.noreply.github.com"
+      #     git fetch origin main
+      #     git rebase origin/main
+      #     git add .
+      #     git commit -m "Updated ${{ inputs.lspPackageName }}"
+      #     git push origin main
