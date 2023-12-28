@@ -1,0 +1,25 @@
+name: Lsp List Installer
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 6 * * 1'
+
+jobs:
+  call-lsp-downloader:
+    strategy:
+      max-parallel: 1
+      matrix:
+        include:
+          - directory: lsp/bash
+            lspPackageName: bash-language-server
+          - directory: lsp/ansible
+            lspPackageName: ansible-language-server
+          - directory: lsp/yaml
+            lspPackageName: yaml-language-server
+          - directory: lsp/python
+            lspPackageName: pyright
+    uses: ./.github/workflows/lsp-downloader.yml
+    with:
+      directory: ${{ matrix.directory }}
+      lspPackageName: ${{ matrix.lspPackageName }}
