@@ -36,6 +36,7 @@ jobs:
           [ "${packageName:0:1}" == "@" ] && packageName=$(echo "${packageName}" | grep -oP "(?<=/)[^/]+")
           npm install -g ${{ inputs.lspPackageName }} --prefix $ARTIFACT_PATH/$packageName
           tar czvf $packageName.tgz -C $ARTIFACT_PATH/ $packageName
+          ls -R
           echo "package-name=$packageName" >> $GITHUB_OUTPUT
           echo "artifact-path=$ARTIFACT_PATH/$packageName.tgz" >> $GITHUB_OUTPUT
           
@@ -46,22 +47,22 @@ jobs:
           path: ${{ steps.get-lsp.outputs.artifact-path }}
           retention-days: 1
   
-  commit-and-push:
-    runs-on: ubuntu-latest
-    needs: get-lsp
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+  # commit-and-push:
+  #   runs-on: ubuntu-latest
+  #   needs: get-lsp
+  #   steps:
+  #     - name: Checkout Code
+  #       uses: actions/checkout@v4
 
-      - name: Download artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: ${{ needs.get-lsp.outputs.package-name }}
+  #     - name: Download artifact
+  #       uses: actions/download-artifact@v3
+  #       with:
+  #         name: ${{ needs.get-lsp.outputs.package-name }}
 
-      - name: Move artifact to lsp dir
-        run: |
-          ls -R
-          mkdir -p ${{ inputs.directory }}
+  #     - name: Move artifact to lsp dir
+  #       run: |
+  #         ls -R
+  #         mkdir -p ${{ inputs.directory }}
         
       # - name: Check If Needs Update
       #   id: check_for_update
