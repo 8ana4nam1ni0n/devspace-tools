@@ -64,7 +64,7 @@ jobs:
       - name: Commit and Push
         if: ${{ steps.check_for_update.outputs.needs-update == 1 }}
         run: |
-          git fetch origin/main
+          git fetch origin main
           git rebase origin/main
           git add .
           git commit -m "Updated ${{ inputs.lspPackageName }}"
