@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       artifact-path: ${{ steps.get-lsp.outputs.artifact-path }}
-      package-name: $ {{ steps.get-lsp.outputs.package-name }}
+      package-name: ${{ steps.get-lsp.outputs.package-name }}
 
     steps:
       - name: Checkout Code
@@ -62,7 +62,7 @@ jobs:
       - name: Move artifact to lsp dir
         run: |
           ls -R
-          mkdir -p ${{ inputs.directory }}
+          # mkdir -p ${{ inputs.directory }}
         
       # - name: Check If Needs Update
       #   id: check_for_update
