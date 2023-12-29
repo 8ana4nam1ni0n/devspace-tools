@@ -74,7 +74,7 @@ jobs:
           fi
 
       - name: Commit and Push
-        if: ${{ steps.git-check.outputs.needs-update == "true" }}
+        if: steps.git-check.outputs.needs-update == 'true'
         run: |
           git config --global user.name github-actions
           git config --global user.email github-actions@github.com
