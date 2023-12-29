@@ -68,9 +68,9 @@ jobs:
         id: git-check
         run: |
           if [ -z "$(git status --porcelain)" ]; then
-            echo "needs-update=true" >> $GITHUB_OUTPUT
-          else
             echo "needs-update=false" >> $GITHUB_OUTPUT
+          else
+            echo "needs-update=true" >> $GITHUB_OUTPUT
           fi
 
       - name: Commit and Push
