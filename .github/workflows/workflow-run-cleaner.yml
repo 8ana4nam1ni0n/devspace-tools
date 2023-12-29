@@ -1,6 +1,7 @@
 name: Clean All Workflow Runs
 
 on:
+  workflow_dispatch:
   schedule:
   - cron: "0 4 * * 1"
 
