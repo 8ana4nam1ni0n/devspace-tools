@@ -14,7 +14,7 @@ jobs:
           - directory: lsp/bash
             lspPackageName: bash-language-server
           - directory: lsp/ansible
-            lspPackageName: ansible-language-server
+            lspPackageName: "@ansible/ansible-language-server"
           - directory: lsp/yaml
             lspPackageName: yaml-language-server
           - directory: lsp/python
