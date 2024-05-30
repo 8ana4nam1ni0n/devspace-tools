@@ -1,0 +1,136 @@
+name: Get-All-Tools
+
+on:
+  workflow_dispatch:
+  schedule:
+  - cron: "0 6 * * 1"
+
+jobs:
+  get-fd-find:
+    uses: ./.github/workflows/curler-reusable.yml
+    with:
+      directory: fd
+      githubUser: sharkdp
+      githubRepo: fd
+      artifact: fd-VERSION-x86_64-unknown-linux-musl.tar.gz
+
+  get-mdcat:
+    needs: get-fd-find
+    uses: ./.github/workflows/curler-reusable.yml
+    with:
+      directory: mdcat
+      githubUser: swsnr
+      githubRepo: mdcat
+      artifact: mdcat-VERSION-x86_64-unknown-linux-musl.tar.gz
+  
+  get-ripgrep:
+    needs: get-mdcat
+    uses: ./.github/workflows/curler-reusable.yml
+    with:
+      directory: ripgrep
+      githubUser: BurntSushi
+      githubRepo: ripgrep
+      artifact: ripgrep-VERSION-x86_64-unknown-linux-musl.tar.gz
+
+  get-starship:
+    needs: get-ripgrep
+    uses: ./.github/workflows/curler-reusable.yml
+    with:
+      directory: starship
+      githubUser: starship
+      githubRepo: starship
+      artifact: starship-x86_64-unknown-linux-musl.tar.gz
+
+  get-neovim:
+    needs: get-starship
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Dependencies
+        run: sudo apt-get install -y curl
+
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Config Git
+        run: |
+          git config --global user.name "8an4nam1ni0n"
+          git config --global user.email "24194029+8ana4nam1ni0n@users.noreply.github.com"
+          mkdir -p nvim
+
+      - name: Fetch Neovim Nightly
+        run: |
+          cd nvim
+          curl -L https://github.com/neovim/neovim-releases/releases/download/nightly/nvim-linux64.tar.gz -o nvim-nightly.tar.gz
+          cd -
+
+      - name: Commit and Push
+        run: |
+         git add .
+         git commit -m "Updated neovim nightly to most recent build"
+         git push origin main
+    
+  get-lsps-from-npm:
+    needs: get-neovim
+    strategy:
+      max-parallel: 1
+      matrix:
+        include:
+          - directory: lsp/bash
+            lspPackageName: bash-language-server
+          - directory: lsp/ansible
+            lspPackageName: "@ansible/ansible-language-server"
+          - directory: lsp/yaml
+            lspPackageName: yaml-language-server
+          - directory: lsp/python
+            lspPackageName: pyright
+    uses: ./.github/workflows/lsp-downloader.yml
+    with:
+      directory: ${{ matrix.directory }}
+      lspPackageName: ${{ matrix.lspPackageName }}
+
+  get-lua-lsp:
+    needs: get-lsps-from-npm
+    uses: ./.github/workflows/curler-reusable.yml
+    with:
+      directory: lsp/lua
+      githubUser: LuaLs
+      githubRepo: lua-language-server
+      artifact: lua-language-server-VERSION-linux-x64.tar.gz
+
+  get-jdtls-lsp:
+    needs: get-lua-lsp
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Dependencies
+        run: sudo apt-get install -y curl
+
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Config Git
+        run: |
+          git config --global user.name "8an4nam1ni0n"
+          git config --global user.email "24194029+8ana4nam1ni0n@users.noreply.github.com"
+          mkdir -p lsp/java
+
+      - name: Fetch JDTLS From Snapshot
+        run: |
+          cd lsp/java
+          CURRENT=$(ls)
+          LATEST=$(curl -s  https://download.eclipse.org/jdtls/snapshots/latest.txt)
+          if [ "$CURRENT" != "$LATEST" ]; then
+           [[ ! -z "$CURRENT" ]] && rm "$CURRENT"
+            curl -O "https://download.eclipse.org/jdtls/snapshots/${LATEST}"
+          fi
+          echo "LATEST_VERSION=$LATEST" >> $GITHUB_ENV
+          echo "CURRENT_VERSION=$CURRENT" >> $GITHUB_ENV
+          cd -
+          
+      - name: Commit and Push
+        run: |
+          if [ "$CURRENT_VERSION" != "$LATEST_VERSION" ]; then
+            git add .
+            git commit -m "Updated JDTLS to $LATEST_VERSION"
+            git push origin main
+          fi
+  
