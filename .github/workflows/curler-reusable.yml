@@ -47,9 +47,9 @@ jobs:
           else
             UPDATE=1
           fi
-          echo "NEEDS_UPDATE=$UPDATE" >> $GITHUB_OUTPUT
-          echo "ARTIFACT=$ARTIFACT" >> $GITHUB_OUTPUT
-          echo "OLD=$FILENAME" >> $GITHUB_OUTPUT
+          echo "NEEDS_UPDATE=$UPDATE" >> $GITHUB_ENV
+          echo "ARTIFACT=$ARTIFACT" >> $GITHUB_ENV
+          echo "OLD=$FILENAME" >> $GITHUB_ENV
           cd -
 
       - name: Commit and Push
