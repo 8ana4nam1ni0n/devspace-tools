@@ -83,6 +83,11 @@ jobs:
         run: |
           git config --global user.name github-actions
           git config --global user.email github-actions@github.com
+          git remote update
+          if ! git status -uno | grep -q 'Your branch is up to date'; then
+            echo "Changes detected on the remote repository. Performing git pull..."
+            git pull
+          fi
           git add ${{ inputs.directory }}/*
           git commit -m "Updated ${{ inputs.lspPackageName }}"
           git push origin main
