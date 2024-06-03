@@ -1,0 +1,15 @@
+name: Google Java Format
+on:
+  schedule:
+  - cron: "0 6 * * 1"
+
+  workflow_dispatch:
+
+jobs:
+  call-curler:
+    uses: ./.github/workflows/curler-reusable.yml
+    with:
+      directory: java-tools/formatter
+      githubUser: google
+      githubRepo: google-java-format
+      artifact: google-java-format-VERSION-all-deps.jar
