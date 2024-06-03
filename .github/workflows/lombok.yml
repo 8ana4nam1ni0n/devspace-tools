@@ -49,6 +49,11 @@ jobs:
           git rebase origin/main
 
       - name: Download Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ needs.get-lombok.outputs.artifact }}
+
+      - name: Move artifact
         run: |
           ls -R
           mkdir -p java-tools/libs
