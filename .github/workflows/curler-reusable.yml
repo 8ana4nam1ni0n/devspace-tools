@@ -31,6 +31,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Get Artifact
+        id: get-artifact
         run: |
           LATEST_VERSION=$(curl -s https://api.github.com/repos/${{ inputs.githubUser }}/${{ inputs.githubRepo }}/releases/latest | jq -r '.tag_name')
           VERSION_STRING=$(echo $LATEST_VERSION | grep -oE "v?([0-9]+\.){2}[0-9]+")
