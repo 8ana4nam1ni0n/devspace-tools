@@ -22,7 +22,7 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Get Lombok
-        id: get-artifact
+        id: get-lombok
         run: |
           artifact="lombok"
           packageName="$artifact.jar"
