@@ -65,9 +65,19 @@ jobs:
 
       - name: Commit and Push
         run: |
-         git add .
-         git commit -m "Updated neovim nightly to most recent build"
-         git push origin main
+          git remote update
+          if ! git status -uno | grep -q 'Your branch is up to date'; then
+            echo "Changes detected on the remote repository. Performing git pull..."
+            git pull
+          fi
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "There are changes to commit"
+            git add .
+            git commit -m "Updated neovim nightly to most recent build"
+            git push origin main
+          else
+            echo "No changes to commit"
+          fi          
     
   get-lsps-from-npm:
     needs: get-neovim
