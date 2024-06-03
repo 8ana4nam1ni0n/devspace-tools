@@ -13,3 +13,4 @@ jobs:
       githubUser: google
       githubRepo: google-java-format
       artifact: google-java-format-VERSION-all-deps.jar
+      version_prefix_to_remove: v
