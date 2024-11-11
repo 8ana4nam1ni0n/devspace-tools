@@ -50,7 +50,7 @@ jobs:
           echo "package-name=$ARTIFACT" >> $GITHUB_OUTPUT
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.get-artifact.outputs.artifact }}
           path: ${{ steps.get-artifact.outputs.package-name }}
