@@ -117,6 +117,11 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Update Repo From Remote
+        run: |
+          git fetch origin main
+          git rebase origin/main
+
       - name: Config Git
         run: |
           git config --global user.name "8an4nam1ni0n"
