@@ -31,7 +31,7 @@ jobs:
           echo "package-name=$packageName" >> $GITHUB_OUTPUT
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.get-lombok.outputs.artifact }}
           path: ${{ steps.get-lombok.outputs.package-name }}
@@ -49,7 +49,7 @@ jobs:
           git rebase origin/main
 
       - name: Download Artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: ${{ needs.get-lombok.outputs.artifact }}
 
