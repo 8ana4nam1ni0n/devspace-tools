@@ -23,7 +23,7 @@ jobs:
       - name: Fetch Neovim Nightly
         run: |
           cd nvim
-          curl -L https://github.com/neovim/neovim-releases/releases/download/nightly/nvim-linux64.tar.gz -o nvim-nightly.tar.gz
+          curl -L https://github.com/neovim/neovim-releases/releases/download/nightly/nvim-linux-x86_64.tar.gz -o nvim-nightly.tar.gz
           cd -
 
       - name: Commit and Push
